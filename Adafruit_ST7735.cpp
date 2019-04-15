@@ -11,8 +11,8 @@
     @param  sclk  SPI Clock pin #
     @param  rst   Reset pin # (optional, pass -1 if unused)
 */
-Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t mosi,
-  int8_t sclk, int8_t rst) : Adafruit_ST77xx(cs, dc, mosi, sclk, rst) {
+Adafruit_ST7735::Adafruit_ST7735(PinName cs, PinName dc, PinName mosi,
+  PinName sclk, PinName rst) : Adafruit_ST77xx(cs, dc, mosi, sclk, rst) {
 }
 
 /*!
@@ -21,11 +21,10 @@ Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t mosi,
     @param  dc   Data/Command pin #
     @param  rst  Reset pin # (optional, pass -1 if unused)
 */
-Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t rst) :
+Adafruit_ST7735::Adafruit_ST7735(PinName cs, PinName dc, PinName rst) :
   Adafruit_ST77xx(cs, dc, rst) {
 }
 
-#if !defined(ESP8266)
 /*!
     @brief  Instantiate Adafruit ST7735 driver with selectable hardware SPI
     @param  spiClass  Pointer to an SPI device to use (e.g. &SPI1)
@@ -33,10 +32,9 @@ Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t rst) :
     @param  dc        Data/Command pin #
     @param  rst       Reset pin # (optional, pass -1 if unused)
 */
-Adafruit_ST7735::Adafruit_ST7735(SPIClass *spiClass, int8_t cs, int8_t dc,
-  int8_t rst) : Adafruit_ST77xx(spiClass, cs, dc, rst) {
+Adafruit_ST7735::Adafruit_ST7735(SPI *spi, PinName cs, PinName dc,
+  PinName rst) : Adafruit_ST77xx(spi, cs, dc, rst) {
 }
-#endif // end !ESP8266
 
 // SCREEN INITIALIZATION ***************************************************
 

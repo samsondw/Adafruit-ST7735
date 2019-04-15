@@ -83,13 +83,11 @@
 /// Subclass of SPITFT for ST77xx displays (lots in common!)
 class Adafruit_ST77xx : public Adafruit_SPITFT {
   public:
-    Adafruit_ST77xx(int8_t _CS, int8_t _DC, int8_t _MOSI, int8_t _SCLK,
-      int8_t _RST = -1, int8_t _MISO = -1);
-    Adafruit_ST77xx(int8_t CS, int8_t RS, int8_t RST = -1);
-#if !defined(ESP8266)
-    Adafruit_ST77xx(SPIClass *spiClass, int8_t CS, int8_t RS, int8_t
-      RST = -1);
-#endif // end !ESP8266
+    Adafruit_ST77xx(PinName _CS, PinName _DC, PinName _MOSI, PinName _SCLK,
+      PinName _RST = NC, PinName _MISO = NC);
+    Adafruit_ST77xx(PinName CS, PinName RS, PinName RST = NC);
+    Adafruit_ST77xx(SPI *spi, PinName CS, PinName RS, PinName
+      RST = NC);
 
     void setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
     void setRotation(uint8_t r);

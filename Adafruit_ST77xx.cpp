@@ -38,8 +38,8 @@
     @param  miso  SPI MISO pin # (optional, pass -1 if unused)
 */
 /**************************************************************************/
-Adafruit_ST77xx::Adafruit_ST77xx(int8_t cs, int8_t dc, int8_t mosi,
-  int8_t sclk, int8_t rst, int8_t miso) : Adafruit_SPITFT(
+Adafruit_ST77xx::Adafruit_ST77xx(PinName cs, PinName dc, PinName mosi,
+  PinName sclk, PinName rst, PinName miso) : Adafruit_SPITFT(
   ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160, cs, dc, mosi, sclk, rst, miso) {
 }
 
@@ -51,11 +51,10 @@ Adafruit_ST77xx::Adafruit_ST77xx(int8_t cs, int8_t dc, int8_t mosi,
     @param  rst   Reset pin # (optional, pass -1 if unused)
 */
 /**************************************************************************/
-Adafruit_ST77xx::Adafruit_ST77xx(int8_t cs, int8_t dc, int8_t rst) :
+Adafruit_ST77xx::Adafruit_ST77xx(PinName cs, PinName dc, PinName rst) :
   Adafruit_SPITFT(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160, cs, dc, rst) {
 }
 
-#if !defined(ESP8266)
 /**************************************************************************/
 /*!
     @brief  Instantiate Adafruit ST77XX driver with selectable hardware SPI
@@ -65,11 +64,10 @@ Adafruit_ST77xx::Adafruit_ST77xx(int8_t cs, int8_t dc, int8_t rst) :
     @param  rst   Reset pin # (optional, pass -1 if unused)
 */
 /**************************************************************************/
-Adafruit_ST77xx::Adafruit_ST77xx(SPIClass *spiClass, int8_t cs, int8_t dc,
-  int8_t rst) : Adafruit_SPITFT(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160,
-  spiClass, cs, dc, rst) {
+Adafruit_ST77xx::Adafruit_ST77xx(SPI *spi, PinName cs, PinName dc,
+  PinName rst) : Adafruit_SPITFT(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160,
+  spi, cs, dc, rst) {
 }
-#endif // end !ESP8266
 
 /**************************************************************************/
 /*!
@@ -99,7 +97,7 @@ void Adafruit_ST77xx::displayInit(const uint8_t *addr) {
     if(ms) {
       ms = pgm_read_byte(addr++); // Read post-command delay time (ms)
       if(ms == 255) ms = 500;     // If 255, delay for 500 ms
-      delay(ms);
+      wait_ms(ms);
     }
   }
   endWrite();
@@ -213,4 +211,3 @@ void Adafruit_ST77xx::setColRowStart(int8_t col, int8_t row) {
   _colstart = col;
   _rowstart = row;
 }
-
