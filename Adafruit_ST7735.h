@@ -51,8 +51,11 @@
 class Adafruit_ST7735 : public Adafruit_ST77xx
 {
 public:
+	Adafruit_ST7735(uint16_t w, uint16_t h, PinName cs, PinName dc, PinName mosi, PinName sclk, PinName rst);
 	Adafruit_ST7735(PinName cs, PinName dc, PinName mosi, PinName sclk, PinName rst);
+	Adafruit_ST7735(uint16_t w, uint16_t h, PinName cs, PinName dc, PinName rst);
 	Adafruit_ST7735(PinName cs, PinName dc, PinName rst);
+	Adafruit_ST7735(uint16_t w, uint16_t h, SPI &spi, PinName cs, PinName dc, PinName rst, int bits = 8, int mode = 0, int freq = ST7735_SPI_DEFAULT_FREQ);
 	Adafruit_ST7735(SPI &spi, PinName cs, PinName dc, PinName rst, int bits = 8, int mode = 0, int freq = ST7735_SPI_DEFAULT_FREQ);
 
 	// Differences between displays (usu. identified by colored tab on

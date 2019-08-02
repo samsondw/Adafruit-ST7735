@@ -86,8 +86,11 @@
 class Adafruit_ST77xx : public Adafruit_SPITFT
 {
 public:
+  Adafruit_ST77xx(uint16_t w, uint16_t h, PinName _CS, PinName _DC, PinName _MOSI, PinName _SCLK, PinName _RST = NC, PinName _MISO = NC);
   Adafruit_ST77xx(PinName _CS, PinName _DC, PinName _MOSI, PinName _SCLK, PinName _RST = NC, PinName _MISO = NC);
+  Adafruit_ST77xx(uint16_t w, uint16_t h, PinName CS, PinName RS, PinName RST = NC);
   Adafruit_ST77xx(PinName CS, PinName RS, PinName RST = NC);
+  Adafruit_ST77xx(uint16_t w, uint16_t h, SPI &spi, PinName CS, PinName RS, PinName RST = NC, int bits = 8, int mode = 0, int freq = ST7735_SPI_DEFAULT_FREQ);
   Adafruit_ST77xx(SPI &spi, PinName CS, PinName RS, PinName RST = NC, int bits = 8, int mode = 0, int freq = ST7735_SPI_DEFAULT_FREQ);
 
   void setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);

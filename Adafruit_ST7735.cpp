@@ -4,6 +4,21 @@
 
 /*!
     @brief  Instantiate Adafruit ST7735 driver with software SPI
+    @param  w     Display width in pixels at default rotation setting (0).
+    @param  h     Display height in pixels at default rotation setting (0).
+    @param  cs    Chip select pin #
+    @param  dc    Data/Command pin #
+    @param  mosi  SPI MOSI pin #
+    @param  sclk  SPI Clock pin #
+    @param  rst   Reset pin # (optional, pass -1 if unused)
+*/
+Adafruit_ST7735::Adafruit_ST7735(uint16_t w, uint16_t h, PinName cs, PinName dc, PinName mosi, PinName sclk, PinName rst)
+	: Adafruit_ST77xx(w, h, cs, dc, mosi, sclk, rst)
+{
+}
+
+/*!
+    @brief  Instantiate Adafruit ST7735 driver with software SPI
     @param  cs    Chip select pin #
     @param  dc    Data/Command pin #
     @param  mosi  SPI MOSI pin #
@@ -12,6 +27,18 @@
 */
 Adafruit_ST7735::Adafruit_ST7735(PinName cs, PinName dc, PinName mosi, PinName sclk, PinName rst)
 	: Adafruit_ST77xx(cs, dc, mosi, sclk, rst)
+{
+}
+
+/*!
+    @brief  Instantiate Adafruit ST7735 driver with default hardware SPI
+    @param  w     Display width in pixels at default rotation setting (0).
+    @param  h     Display height in pixels at default rotation setting (0).
+    @param  cs   Chip select pin #
+    @param  dc   Data/Command pin #
+    @param  rst  Reset pin # (optional, pass -1 if unused)
+*/
+Adafruit_ST7735::Adafruit_ST7735(uint16_t w, uint16_t h, PinName cs, PinName dc, PinName rst) : Adafruit_ST77xx(w, h, cs, dc, rst)
 {
 }
 
@@ -27,13 +54,30 @@ Adafruit_ST7735::Adafruit_ST7735(PinName cs, PinName dc, PinName rst) : Adafruit
 
 /*!
     @brief  Instantiate Adafruit ST7735 driver with selectable hardware SPI
-    @param  spiClass  Pointer to an SPI device to use (e.g. &SPI1)
-    @param  cs        Chip select pin #
-    @param  dc        Data/Command pin #
-    @param  rst       Reset pin # (optional, pass -1 if unused)
-    @param  bits      SPI Bits (4 - 16, default: 8)
-    @param  mode      SPI mode (default: 0)
-    @param  freq      SPI frequency (optional, pass 0 if unused)
+    @param  w     Display width in pixels at default rotation setting (0).
+    @param  h     Display height in pixels at default rotation setting (0).
+    @param  spi   Pointer to an SPI device to use (e.g. &SPI1)
+    @param  cs    Chip select pin #
+    @param  dc    Data/Command pin #
+    @param  rst   Reset pin # (optional, pass -1 if unused)
+    @param  bits  SPI Bits (4 - 16, default: 8)
+    @param  mode  SPI mode (default: 0)
+    @param  freq  SPI frequency (optional, pass 0 if unused)
+*/
+Adafruit_ST7735::Adafruit_ST7735(uint16_t w, uint16_t h, SPI &spi, PinName cs, PinName dc, PinName rst, int bits, int mode, int freq)
+	: Adafruit_ST77xx(w, h, spi, cs, dc, rst, bits, mode, freq)
+{
+}
+
+/*!
+    @brief  Instantiate Adafruit ST7735 driver with selectable hardware SPI
+    @param  spi   Pointer to an SPI device to use (e.g. &SPI1)
+    @param  cs    Chip select pin #
+    @param  dc    Data/Command pin #
+    @param  rst   Reset pin # (optional, pass -1 if unused)
+    @param  bits  SPI Bits (4 - 16, default: 8)
+    @param  mode  SPI mode (default: 0)
+    @param  freq  SPI frequency (optional, pass 0 if unused)
 */
 Adafruit_ST7735::Adafruit_ST7735(SPI &spi, PinName cs, PinName dc, PinName rst, int bits, int mode, int freq)
 	: Adafruit_ST77xx(spi, cs, dc, rst, bits, mode, freq)
@@ -216,16 +260,12 @@ void Adafruit_ST7735::initR(uint8_t options)
 	}
 	else if ((options == INITR_144GREENTAB) || (options == INITR_HALLOWING))
 	{
-		_height = ST7735_TFTHEIGHT_128;
-		_width = ST7735_TFTWIDTH_128;
 		displayInit(Rcmd2green144);
 		_colstart = 2;
 		_rowstart = 3; // For default rotation 0
 	}
 	else if (options == INITR_MINI160x80)
 	{
-		_height = ST7735_TFTHEIGHT_160;
-		_width = ST7735_TFTWIDTH_80;
 		displayInit(Rcmd2green160x80);
 		_colstart = 24;
 		_rowstart = 0;
@@ -271,6 +311,9 @@ void Adafruit_ST7735::setRotation(uint8_t m)
 {
 	uint8_t madctl = 0;
 
+	uint16_t original_width = _width,
+			 original_height = _height;
+
 	rotation = m & 3; // can't be higher than 3
 
 	// For ST7735 with GREEN TAB (including HalloWing)...
@@ -282,84 +325,36 @@ void Adafruit_ST7735::setRotation(uint8_t m)
 	case 0:
 		madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MY | ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80) ? ST77XX_MADCTL_RGB : ST7735_MADCTL_BGR);
 
-		if (tabcolor == INITR_144GREENTAB)
-		{
-			_height = ST7735_TFTHEIGHT_128;
-			_width = ST7735_TFTWIDTH_128;
-		}
-		else if (tabcolor == INITR_MINI160x80)
-		{
-			_height = ST7735_TFTHEIGHT_160;
-			_width = ST7735_TFTWIDTH_80;
-		}
-		else
-		{
-			_height = ST7735_TFTHEIGHT_160;
-			_width = ST7735_TFTWIDTH_128;
-		}
+		// No change to width/height
+
 		_xstart = _colstart;
 		_ystart = _rowstart;
 		break;
 	case 1:
 		madctl = ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80) ? ST77XX_MADCTL_RGB : ST7735_MADCTL_BGR);
 
-		if (tabcolor == INITR_144GREENTAB)
-		{
-			_width = ST7735_TFTHEIGHT_128;
-			_height = ST7735_TFTWIDTH_128;
-		}
-		else if (tabcolor == INITR_MINI160x80)
-		{
-			_width = ST7735_TFTHEIGHT_160;
-			_height = ST7735_TFTWIDTH_80;
-		}
-		else
-		{
-			_width = ST7735_TFTHEIGHT_160;
-			_height = ST7735_TFTWIDTH_128;
-		}
+		// Swap width/height
+		_width = original_height;
+		_height = original_width;
+
 		_ystart = _colstart;
 		_xstart = _rowstart;
 		break;
 	case 2:
 		madctl = ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80) ? ST77XX_MADCTL_RGB : ST7735_MADCTL_BGR);
 
-		if (tabcolor == INITR_144GREENTAB)
-		{
-			_height = ST7735_TFTHEIGHT_128;
-			_width = ST7735_TFTWIDTH_128;
-		}
-		else if (tabcolor == INITR_MINI160x80)
-		{
-			_height = ST7735_TFTHEIGHT_160;
-			_width = ST7735_TFTWIDTH_80;
-		}
-		else
-		{
-			_height = ST7735_TFTHEIGHT_160;
-			_width = ST7735_TFTWIDTH_128;
-		}
+		// No change to width/height
+
 		_xstart = _colstart;
 		_ystart = _rowstart;
 		break;
 	case 3:
 		madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80) ? ST77XX_MADCTL_RGB : ST7735_MADCTL_BGR);
 
-		if (tabcolor == INITR_144GREENTAB)
-		{
-			_width = ST7735_TFTHEIGHT_128;
-			_height = ST7735_TFTWIDTH_128;
-		}
-		else if (tabcolor == INITR_MINI160x80)
-		{
-			_width = ST7735_TFTHEIGHT_160;
-			_height = ST7735_TFTWIDTH_80;
-		}
-		else
-		{
-			_width = ST7735_TFTHEIGHT_160;
-			_height = ST7735_TFTWIDTH_128;
-		}
+		// Swap width/height
+		_width = original_height;
+		_height = original_width;
+
 		_ystart = _colstart;
 		_xstart = _rowstart;
 		break;
